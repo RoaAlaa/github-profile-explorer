@@ -1,11 +1,14 @@
-// src/app/user/[username]/page.tsx
 import { Suspense } from "react";
+import Link from "next/link";
 import { getGithubUser, getGithubUserRepos } from "@/lib/github";
 import { computeUserStats } from "@/lib/stats";
 import { notFound } from "next/navigation";
 import ProfileCard from "@/components/ProfileCard";
 import RepoList from "@/components/RepoList";
 import AISummary from "@/components/AiSummary";
+import NotesSection from "@/components/NotesSection";
+
+export const dynamic = "force-dynamic";
 
 export default async function UserPage({
   params,
@@ -24,12 +27,37 @@ export default async function UserPage({
   const stats = computeUserStats(user, safeRepos);
 
   return (
-    <div>
+    <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+      >
+        ← Back
+      </Link>
+
       <ProfileCard user={user} />
-      <Suspense fallback={<div className="p-4 text-sm text-gray-500">Analyzing profile…</div>}>
+
+      <Suspense
+        fallback={
+          <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-500">
+            Analyzing profile…
+          </div>
+        }
+      >
         <AISummary user={user} stats={stats} repos={safeRepos} />
       </Suspense>
-      <RepoList repos={safeRepos} />
-    </div>
+
+      <Suspense
+        fallback={
+          <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-500">
+            Loading notes…
+          </div>
+        }
+      >
+        <NotesSection username={username} />
+      </Suspense>
+
+      <RepoList repos={safeRepos} username={username} />
+    </main>
   );
 }

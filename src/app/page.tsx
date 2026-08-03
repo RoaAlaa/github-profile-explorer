@@ -1,23 +1,36 @@
+import Link from "next/link";
 import UserSearchForm from "@/components/UserSearchForm";
-import CompareForm from "@/components/CompareForm";
 
 export default function HomePage() {
   return (
-    <main className="max-w-2xl mx-auto p-8 space-y-12">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">GitHub Profile Explorer</h1>
-        <p className="text-gray-500">Search a profile, or compare two side by side.</p>
-      </div>
+    <main className="min-h-full flex flex-col items-center justify-center px-6 py-12">
+      <div className="w-full max-w-md space-y-10 text-center">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            GitHub Profile Explorer
+          </h1>
+          <p className="text-gray-500">
+            Search a developer or compare two profiles.
+          </p>
+        </div>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-3">Search a profile</h2>
         <UserSearchForm />
-      </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-3">Compare two users</h2>
-        <CompareForm />
-      </section>
+        <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
+          <Link
+            href="/compare"
+            className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-4 py-2 font-medium transition-colors hover:border-gray-400 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900"
+          >
+            Compare profiles
+          </Link>
+          <Link
+            href="/notes"
+            className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-4 py-2 font-medium transition-colors hover:border-gray-400 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900"
+          >
+            All notes
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

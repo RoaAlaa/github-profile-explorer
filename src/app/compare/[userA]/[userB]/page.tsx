@@ -1,9 +1,9 @@
 import { getGithubUser, getGithubUserRepos } from "@/lib/github";
-import { computeUserStats } from "@/lib/stats";
+import { computeUserStats, fetchUserCommitFrequency } from "@/lib/stats";
 import CompareView from "@/components/CompareView";
 import { notFound } from "next/navigation";
 
-export default async function ComparePage({
+export default async function CompareResultsPage({
   params,
 }: {
   params: Promise<{ userA: string; userB: string }>;
@@ -17,8 +17,20 @@ export default async function ComparePage({
 
   if (!userAInfo || !userBInfo) notFound();
 
-const statsA = computeUserStats(userAInfo, userARepos ?? []);
-const statsB = computeUserStats(userBInfo, userBRepos ?? []);
+  const [commitFreqA, commitFreqB] = await Promise.all([
+    fetchUserCommitFrequency(userA, userARepos ?? []),
+    fetchUserCommitFrequency(userB, userBRepos ?? []),
+  ]);
 
-  return <CompareView statsA={statsA} statsB={statsB} />;
+  const statsA = { ...computeUserStats(userAInfo, userARepos ?? []), ...commitFreqA };
+  const statsB = { ...computeUserStats(userBInfo, userBRepos ?? []), ...commitFreqB };
+
+  return (
+    <CompareView
+      userA={userAInfo}
+      userB={userBInfo}
+      statsA={statsA}
+      statsB={statsB}
+    />
+  );
 }

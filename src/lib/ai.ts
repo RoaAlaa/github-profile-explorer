@@ -18,16 +18,7 @@ export async function analyzeUserProfile(
     user: GithubUser,
     stats: UserStats,
     repos: GithubUserRepo[]
-): Promise<{
-    user: GithubUser;
-    stats: UserStats;
-    topRepos: Array<{
-        name: string;
-        description: string | null;
-        language: string | null;
-        stars: number;
-    }>;
-}> {
+): Promise<string> {
     const topRepos = [...repos]
         .sort((a, b) => b.stargazers_count - a.stargazers_count)
         .slice(0, 10)

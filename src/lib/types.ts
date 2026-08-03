@@ -20,6 +20,8 @@ export interface GithubUserRepo {
   description: string | null; // The description of the repository
   language: string | null; // The primary language of the repository
   updated_at: string; // The last updated timestamp of the repository
+  fork: boolean; // Whether the repository is a fork
+  default_branch: string; // The default branch of the repository
 }
 
 export interface UserStats {
@@ -29,4 +31,6 @@ export interface UserStats {
   topLanguage: string | null;
   followers: number;
   accountAgeYears: number;
+  commitsLastYear: number | null;
+  avgCommitsPerWeek: number | null;
 }
