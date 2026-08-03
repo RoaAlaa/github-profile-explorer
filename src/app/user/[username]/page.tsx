@@ -1,8 +1,11 @@
-import { getGithubUser } from "@/lib/github";
-import ProfileCard from "@/components/ProfileCard";
-import { getGithubUserRepos } from "@/lib/github";
-import RepoList from "@/components/RepoList";
+// src/app/user/[username]/page.tsx
+import { Suspense } from "react";
+import { getGithubUser, getGithubUserRepos } from "@/lib/github";
+import { computeUserStats } from "@/lib/stats";
 import { notFound } from "next/navigation";
+import ProfileCard from "@/components/ProfileCard";
+import RepoList from "@/components/RepoList";
+import AISummary from "@/components/AiSummary";
 
 export default async function UserPage({
   params,
@@ -12,15 +15,21 @@ export default async function UserPage({
   const { username } = await params;
   const [user, repos] = await Promise.all([
     getGithubUser(username),
-    getGithubUserRepos(username)
+    getGithubUserRepos(username),
   ]);
+
   if (!user) notFound();
 
-  return (
-  <div>
-    <ProfileCard user={user} />
-    <RepoList repos={repos ?? []} />
-  </div>
-);
-}
+  const safeRepos = repos ?? [];
+  const stats = computeUserStats(user, safeRepos);
 
+  return (
+    <div>
+      <ProfileCard user={user} />
+      <Suspense fallback={<div className="p-4 text-sm text-gray-500">Analyzing profile…</div>}>
+        <AISummary user={user} stats={stats} repos={safeRepos} />
+      </Suspense>
+      <RepoList repos={safeRepos} />
+    </div>
+  );
+}
